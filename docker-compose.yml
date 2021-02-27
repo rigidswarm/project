@@ -1,0 +1,146 @@
+version: '3'
+services:
+    nginx:
+        build:
+            context: ./
+            dockerfile: docker/nginx.docker
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/ssl:/etc/nginx/ssl
+        ports:
+            - '${FORWARD_WEBSERVER_PORT:-443}:443'
+        depends_on:
+            - php-fpm
+        networks:
+            - backend
+    php-fpm:
+        build:
+            context: ./
+            dockerfile: docker/php-fpm.docker
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - mysql
+            - redis
+            - elasticsearch
+        environment:
+            DB_PORT: '${DB_PORT}'
+            DB_HOST: '${DB_HOST}'
+            REDIS_PORT: '${REDIS_PORT}'
+            REDIS_HOST: '${REDIS_HOST}'
+            ELASTICSEARCH_HOSTS: '${ELASTICSEARCH_HOSTS}'
+        networks:
+            - backend
+    php-cli:
+        build:
+            context: ./
+            dockerfile: docker/php-cli.docker
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - mysql
+            - redis
+            - elasticsearch
+        environment:
+            DB_PORT: '${DB_PORT}'
+            DB_HOST: '${DB_HOST}'
+            REDIS_PORT: '${REDIS_PORT}'
+            REDIS_HOST: '${REDIS_HOST}'
+            ELASTICSEARCH_HOSTS: '${ELASTICSEARCH_HOSTS}'
+        tty: true
+        networks:
+            - backend
+    # selenium:
+    #     image: 'selenium/standalone-chrome'
+    #     volumes:
+    #         - '/dev/shm:/dev/shm'
+    #     networks:
+    #         - backend
+    mysql:
+        image: mysql:8.0
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD:-secret}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - mysqlvolume:/var/lib/mysql
+        networks:
+            - backend
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping"]
+#    pgsql:
+#        image: postgres:13
+#        ports:
+#            - '${FORWARD_DB_PORT:-5432}:5432'
+#        environment:
+#            PGPASSWORD: '${DB_PASSWORD:-secret}'
+#            POSTGRES_DB: '${DB_DATABASE}'
+#            POSTGRES_USER: '${DB_USERNAME}'
+#            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+#        volumes:
+#            - 'postgresqlvolume:/var/lib/postgresql/data'
+#        networks:
+#            - backend
+#        healthcheck:
+#          test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+    redis:
+        image: redis:alpine
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - redisvolume:/data
+        networks:
+            - backend
+        healthcheck:
+          test: ["CMD", "redis-cli", "ping"]
+    node:
+        image: node:15.9-alpine
+        volumes:
+            - ./:/var/www
+        working_dir: /var/www
+        tty: true
+        networks:
+            - backend
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+        environment:
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - ./storage/docker/elasticsearch:/usr/share/elasticsearch/data
+        ports:
+            - '${FORWARD_ELASTICSEARCH_PORT:-9200}:9200'
+        networks:
+            - backend
+    # memcached:
+    #     image: 'memcached:alpine'
+    #     ports:
+    #         - '11211:11211'
+    #     networks:
+    #         - backend
+    mailhog:
+        image: mailhog/mailhog:latest
+        ports:
+            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - backend
+networks:
+#    frontend:
+#        driver: custom-driver-1
+    backend:
+        driver: bridge
+volumes:
+    mysqlvolume:
+        driver: local
+#    postgresqlvolume:
+#        driver: local
+    redisvolume:
+        driver: local

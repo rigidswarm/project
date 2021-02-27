@@ -1,0 +1,9 @@
+FROM php:8.0-cli
+
+RUN apt-get update && apt-get install -y libmcrypt-dev default-mysql-client \
+    zlib1g-dev libzip-dev unzip \
+    && pecl install mcrypt-1.0.4 \
+    && docker-php-ext-enable mcrypt \
+    && docker-php-ext-install pdo_mysql pcntl zip
+
+WORKDIR /var/www

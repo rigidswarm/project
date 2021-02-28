@@ -32,3 +32,17 @@ perm:
 	chown ${USER}:${USER} storage -R
 	if [ -d "node_modules" ]; then chown ${USER}:${USER} node_modules -R; fi
 	if [ -d "public/build" ]; then chown ${USER}:${USER} public/build -R; fi
+
+############################################################
+
+#composer:
+#	php composer.phar
+
+php-cli:
+	docker-compose exec php-cli
+
+dcli:
+	docker exec app_php-cli_1
+
+php-cli-composer:
+	docker-compose exec php-cli php composer.phar

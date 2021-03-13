@@ -1,0 +1,5 @@
+FROM node:15.11-alpine
+
+RUN npm install -g npm@7.6.3
+
+WORKDIR /var/www

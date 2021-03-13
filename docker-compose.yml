@@ -97,7 +97,9 @@ services:
         healthcheck:
           test: ["CMD", "redis-cli", "ping"]
     node:
-        image: node:15.9-alpine
+        build:
+            context: ./
+            dockerfile: docker/node.docker
         volumes:
             - ./:/var/www
         working_dir: /var/www

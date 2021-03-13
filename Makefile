@@ -1,7 +1,13 @@
-# Можно указать перед реальной командой @ для того, чтобы она не показывалась при вызове
-# Можно указать пере алиасом другой алиас, который будет выполняться первым, например
+# 	Можно указать перед реальной командой @ для того, чтобы она не показывалась при вызове
+
+# 	Можно указать пере алиасом другой алиас, который будет выполняться первым, например
 # docker-build: perm
 #	docker-compose up --build -d
+
+# 	Можно запускать оригинальные команды не напрямую через docker:
+# php-cli:
+# 	docker exec app_php-cli_1
+# ... а через docker-compose
 
 docker-up:
 	docker-compose up -d
@@ -16,16 +22,16 @@ docker-ps:
 	docker-compose ps
 
 test:
-	docker exec app_php-cli_1 vendor/bin/phpunit --colors=always
+	docker-compose exec php-cli vendor/bin/phpunit
 
 assets-install:
-	docker exec app_node_1 yarn install
+	docker-compose exec node yarn install
 
 assets-dev:
-	docker exec app_node_1 yarn run dev
+	docker-compose exec node yarn run dev
 
 assets-watch:
-	docker exec app_node_1 yarn run watch
+	docker-compose exec node yarn run watch
 
 perm:
 	chown ${USER}:${USER} bootstrap/cache -R

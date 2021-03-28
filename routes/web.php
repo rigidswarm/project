@@ -17,5 +17,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Auth::routes();
 
+Route::get('/verify/{token}', 'Auth\RegisterController@verify')->name('register.verify');
+
 Route::get('/cabinet', [App\Http\Controllers\Cabinet\HomeController::class, 'index'])->name('cabinet');
 

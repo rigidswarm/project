@@ -11,6 +11,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const STATUS_WAIT = 'wait';
+    public const STATUS_ACTIVE = 'active';
+
     /**
      * The attributes that are mass assignable.
      *

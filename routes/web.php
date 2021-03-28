@@ -18,7 +18,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Auth::routes();
 
-Route::get('/verify/{token}', 'Auth\RegisterController@verify')->name('register.verify');
+Route::get('/verify/{token}', [App\Http\Controllers\Auth\RegisterController::class, 'verify'])->name('register.verify');
 
 Route::get('/cabinet', [App\Http\Controllers\Cabinet\HomeController::class, 'index'])->name('cabinet');
 
@@ -26,7 +26,7 @@ Route::group(
     [
         'prefix' => 'admin',
         'as' => 'admin.',
-        'namespace' => 'Admin',
+        'namespace' => 'App\Http\Controllers\Admin',
         'middleware' => ['auth'],
     ],
     function () {

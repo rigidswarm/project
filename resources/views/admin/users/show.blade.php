@@ -26,10 +26,10 @@
         <tr>
             <th>Status</th>
             <td>
-                @if ($user->status === \App\Entity\User::STATUS_WAIT)
+                @if ($user->status === \App\Models\User::STATUS_WAIT)
                     <span class="badge badge-secondary">Waiting</span>
                 @endif
-                @if ($user->status === \App\Entity\User::STATUS_ACTIVE)
+                @if ($user->status === \App\Models\User::STATUS_ACTIVE)
                     <span class="badge badge-primary">Active</span>
                 @endif
             </td>

@@ -11,9 +11,9 @@ Breadcrumbs::for('login', function ($trail) {
     $trail->push('Login', route('login'));
 });
 
-Breadcrumbs::for('for', function ($trail) {
+Breadcrumbs::for('register', function ($trail) {
     $trail->parent('home');
-    $trail->push('for', route('for'));
+    $trail->push('Register', route('register'));
 });
 
 Breadcrumbs::for('password.request', function ($trail) {

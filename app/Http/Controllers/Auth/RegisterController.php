@@ -45,7 +45,7 @@ class RegisterController extends Controller
 
         try {
             $user->verify();
-            return redirect()->route('login')->with('success', 'Your e-mail is verified. You can now login.');
+            return redirect()->route('login')->with('success', 'Your e-mail 1 is verified. You can now login.');
         } catch (\DomainException $e) {
             return redirect()->route('login')->with('error', $e->getMessage());
         }
